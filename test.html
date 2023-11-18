@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkers Game</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 50px);
+      grid-template-rows: repeat(8, 50px);
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      border: 1px solid #ccc;
+    }
+
+    .white {
+      background-color: #eee;
+    }
+
+    .black {
+      background-color: #222;
+      color: #fff;
+    }
+
+    .piece {
+      width: 80%;
+      height: 80%;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .selected {
+      border: 2px solid #00f;
+    }
+  </style>
+</head>
+<body>
+
+<div class="board" id="board"></div>
+
+<script>
+  const boardElement = document.getElementById('board');
+  let selectedPiece = null;
+
+  // Create the initial board
+  function createBoard() {
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const cell = document.createElement('div');
+        cell.className = `cell ${row % 2 === col % 2 ? 'white' : 'black'}`;
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+        cell.addEventListener('click', handleCellClick);
+        boardElement.appendChild(cell);
+      }
+    }
+  }
+
+  // Create the initial pieces
+  function createPieces() {
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 8; col++) {
+        if ((row + col) % 2 !== 0) {
+          const piece = document.createElement('div');
+          piece.className = 'piece';
+          piece.textContent = '●';
+          piece.addEventListener('click', handlePieceClick);
+          boardElement.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`).appendChild(piece);
+        }
+      }
+    }
+
+    for (let row = 5; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        if ((row + col) % 2 !== 0) {
+          const piece = document.createElement('div');
+          piece.className = 'piece';
+          piece.textContent = '●';
+          piece.addEventListener('click', handlePieceClick);
+          boardElement.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`).appendChild(piece);
+        }
+      }
+    }
+  }
+
+  function handleCellClick(event) {
+    const cell = event.target;
+    const row = parseInt(cell.dataset.row);
+    const col = parseInt(cell.dataset.col);
+
+    if (selectedPiece) {
+      movePiece(selectedPiece, row, col);
+    }
+  }
+
+  function handlePieceClick(event) {
+    const piece = event.target;
+    const row = parseInt(piece.parentElement.dataset.row);
+    const col = parseInt(piece.parentElement.dataset.col);
+
+    if (selectedPiece) {
+      deselectPiece(selectedPiece);
+    }
+
+    selectPiece(piece, row, col);
+  }
+
+  function selectPiece(piece, row, col) {
+    selectedPiece = { piece, row, col };
+    piece.classList.add('selected');
+  }
+
+  function deselectPiece() {
+    if (selectedPiece) {
+      selectedPiece.piece.classList.remove('selected');
+      selectedPiece = null;
+    }
+  }
+
+  function movePiece(selectedPiece, newRow, newCol) {
+    // Add your logic for moving the piece here
+    const oldRow = selectedPiece.row;
+    const oldCol = selectedPiece.col;
+
+    // Example: Move the piece to the new cell
+    const oldCell = boardElement.querySelector(`.cell[data-row="${oldRow}"][data-col="${oldCol}"]`);
+    const newCell = boardElement.querySelector(`.cell[data-row="${newRow}"][data-col="${newCol}"]`);
+
+    newCell.appendChild(selectedPiece.piece);
+    deselectPiece();
+  }
+
+  // Initialize the game
+  createBoard();
+  createPieces();
+</script>
+
+</body>
+</html>
